@@ -8,11 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import global.Constants.eGender;
-import global.Constants.eJob;
-import global.Constants.eRankOfCar;
-import global.Constants.eRiskOfTripCountry;
-import global.Constants.eUsageOfStructure;
+import global.Constants;
 
 public class InsurantListImpl implements InsurantList {
 

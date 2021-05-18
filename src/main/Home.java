@@ -14,15 +14,7 @@ import employee.Employee;
 import employee.EmployeeList;
 import employee.EmployeeListImpl;
 import employee.UnderWriter;
-import global.Constants;
-import global.Constants.eAge;
-import global.Constants.eEmployeeRole;
-import global.Constants.eGender;
-import global.Constants.eInsuranceType;
-import global.Constants.eJob;
-import global.Constants.eRankOfCar;
-import global.Constants.eRiskOfTripCountry;
-import global.Constants.eUsageOfStructure;
+import global.Constants.*;
 import insurance.ActualCostInsurance;
 import insurance.CancerInsurance;
 import insurance.DentalInsurance;
@@ -1116,8 +1108,6 @@ public class Home {
 					i--;
 				}
 			}
-			
-			
 			newInsurance.setRateOfJob(tmpRateOfJob);
 		} 
 		
@@ -1143,6 +1133,37 @@ public class Home {
 			break;
 		}
 		return newInsurance;
+	}
+	
+	// 보장내역 설정하기
+	private void makeGuaranteePlan(Insurance newInsurance) {
+		while (true) {
+			try {
+				System.out.println("보장을 원하시는 항목을 선택해주세요.");
+				for (int i = 1; i <= newInsurance.getType().getGuaranteePlan().length; i++) {
+					System.out.println(i + "." + newInsurance.getType().getGuaranteePlan()[i-1]);
+				}
+				System.out.println("0.그만하기");
+				int input = scn.nextInt();
+				if(input > 0 && input <= newInsurance.getType().getGuaranteePlan().length) {
+					System.out.println("해당 항목의 보상금액을 입력해주세요.");
+					System.out.println(newInsurance.getType().getGuaranteePlan()[input-1] + "의 보장금액 : ");
+					int compensation = scn.nextInt();
+					boolean special = scn.nextBoolean();
+					double rate = scn.nextDouble()
+;					newInsurance.addGuaranteePlan(newInsurance.getType().getGuaranteePlan()[input-1], compensation, special, rate);
+				}else if (input == 0) {
+					break;
+				}else {
+					
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("error : 숫자를 입력해주세요");
+				System.out.println("-----------------------");
+				scn.nextLine();
+			}
+
+		}
 	}
 	
 	// 보험 확정하기
@@ -1200,24 +1221,17 @@ public class Home {
 		System.out.println(insurance.getInsuranceId()+". "+insurance.getName());
 		System.out.println("  기본보험료 : "+insurance.getBasicFee());
 		System.out.println("  <나이 요율표>");
-		System.out.println("영유아 : "+insurance.getRateOfAge()[0]);
-		System.out.println("10대 : "+insurance.getRateOfAge()[1]);
-		System.out.println("20대 : "+insurance.getRateOfAge()[2]);
-		System.out.println("30대 : "+insurance.getRateOfAge()[3]);
-		System.out.println("40대 : "+insurance.getRateOfAge()[4]);
-		System.out.println("50대 : "+insurance.getRateOfAge()[5]);
-		System.out.println("노년층 : "+insurance.getRateOfAge()[6]);
+		for (int i = 0; i < eAge.values().length; i++) {
+			System.out.println(eAge.values()[i].getName() + " : " + insurance.getRateOfAge()[i]);
+		}
 		System.out.println("\n  <성별 요율표>");
-		System.out.println("남자 : "+insurance.getRateOfGender()[0]);
-		System.out.println("여자 : "+insurance.getRateOfGender()[1]);
+		for (int i = 0; i < eGender.values().length - 1; i++) {
+			System.out.println(eGender.values()[i].getName() + " : " + insurance.getRateOfAge()[i]);
+		}
 		System.out.println("\n  <직업 요율표>");
-		System.out.println("직장인 : "+insurance.getRateOfJob()[0]);
-		System.out.println("운전기사 : "+insurance.getRateOfJob()[1]);
-		System.out.println("공장노동직 : "+insurance.getRateOfJob()[2]);
-		System.out.println("학생 : "+insurance.getRateOfJob()[3]);
-		System.out.println("교사(수) : "+insurance.getRateOfJob()[4]);
-		System.out.println("군인 : "+insurance.getRateOfJob()[5]);
-		System.out.println("기타직업 : "+insurance.getRateOfJob()[6]);
+		for (int i = 0; i < eJob.values().length - 1; i++) {
+			System.out.println(eJob.values()[i].getName() + " : " + insurance.getRateOfAge()[i]);
+		}
 		System.out.println("-----------------\n");
 		
 		// 보장내역 조회하는 것 코딩해야함
