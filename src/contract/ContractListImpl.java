@@ -1,14 +1,31 @@
 package contract;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import customer.CustomerList;
+import customer.Insurant;
+import insurance.Insurance;
+import insurance.InsuranceList;
 
 public class ContractListImpl implements ContractList {
 	// Components
 	private ArrayList<Contract> contractList;
 	
 	// Constructor
-	public ContractListImpl() {
+	public ContractListImpl() throws FileNotFoundException {
 		this.contractList = new ArrayList<Contract>();
+	}
+	
+	// Initialize
+	@Override
+	public void initialize(InsuranceList insuranceList, CustomerList customerList) throws FileNotFoundException {
+		this.readFromFile(insuranceList, customerList);
 	}
 
 	// Getters&Setters
@@ -18,13 +35,14 @@ public class ContractListImpl implements ContractList {
 	// public Method
 	public boolean insert(Contract contract) {
 		if (this.contractList.add(contract)) {
+			this.writeToFile(contract);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Contract search(String contractId) {
+	public Contract select(String contractId) {
 		for (Contract contract : this.contractList) {
 			if (contract.getContractId().equals(contractId)) {
 				return contract;
@@ -60,5 +78,23 @@ public class ContractListImpl implements ContractList {
 		}
 		return -1;
 	}
-	
+
+	private void writeToFile(Contract contract) {
+		File file = new File("data/contract");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+			writer.append(contract.writeToFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void readFromFile(InsuranceList insuranceList, CustomerList customerList) throws FileNotFoundException {
+		File file = new File("data/contract");
+		Scanner sc = new Scanner(file);
+		while (sc.hasNext()) {
+			Contract contract = new Contract();
+			contract.readFromFile(sc, insuranceList, customerList);
+			this.contractList.add(contract);
+		}
+	}
 }

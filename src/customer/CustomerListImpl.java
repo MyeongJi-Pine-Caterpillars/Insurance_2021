@@ -1,27 +1,35 @@
 package customer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class CustomerListImpl implements CustomerList {
 
 	// Components -> 교수님에게 질문
-	private ArrayList<Customer> CustomerList;
+	private ArrayList<Customer> customerList;
 	
 	// Composition Class
-	 private Customer m_Customer;
+	 private Customer customer;
 
 	// Constructor
-	public CustomerListImpl() {
-		this.CustomerList = new ArrayList<Customer>();
+	public CustomerListImpl() throws FileNotFoundException {
+		this.customerList = new ArrayList<Customer>();
+		this.readFromFile();
 	}
 	
-	// getters & setters
-	public ArrayList<Customer> getCustomerList() {return CustomerList;}
-	public void setCustomerList(ArrayList<Customer> customerList) {CustomerList = customerList;}
+	// Getters & Setters
+	public ArrayList<Customer> getCustomerList() {return customerList;}
+	public void setCustomerList(ArrayList<Customer> customerList) {this.customerList = customerList;}
 	
-	// Methods
+	// Public Methods
 	public boolean insert(Customer customer) {
-		if (this.CustomerList.add(customer)) {
+		if (this.customerList.add(customer)) {
+			this.writeToFile(customer);
 			return true;
 		} else {
 			return false;
@@ -29,7 +37,7 @@ public class CustomerListImpl implements CustomerList {
 	}
 
 	public Customer select(String customerId) {
-		for (Customer customer : this.CustomerList) {
+		for (Customer customer : this.customerList) {
 			if (customer.getCustomerId().equals(customerId)) {
 				return customer;
 			}
@@ -40,7 +48,7 @@ public class CustomerListImpl implements CustomerList {
 	public boolean delete(String customerId) {
 		int index = this.getCustomerIndex(customerId);
 		if(index > -1) {
-			this.CustomerList.remove(index);
+			this.customerList.remove(index);
 			return true;
 		} else {
 			return false;
@@ -51,18 +59,47 @@ public class CustomerListImpl implements CustomerList {
 	public void updateNameById(String customerId, String data) {
 		int index = this.getCustomerIndex(customerId);
 		if(index > -1) {
-			this.CustomerList.get(index).setName(data);
+			this.customerList.get(index).setName(data);
 		}
 	}
+	
+	public boolean checkDuplication(String input) {
+		for(Customer customer: customerList) {
+			if(customer.getCustomerId().equals(input)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-
-	private int getCustomerIndex(String CustomerId) {
-		for (int i = 0; i < this.CustomerList.size(); i++) {
-			if (this.CustomerList.get(i).getCustomerId() == CustomerId) {
+	// Private Methods
+	private int getCustomerIndex(String customerId) {
+		for (int i = 0; i < this.customerList.size(); i++) {
+			if (this.customerList.get(i).getCustomerId() == customerId) {
 				return i;
 			}
 		}
 		return -1;
 	}
-
+	
+	private void writeToFile(Customer customer) {
+		File file = new File("data/customer");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+		    writer.append(customer.writeToFile());
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	}
+	
+	private void readFromFile() throws FileNotFoundException {
+		File file = new File("data/customer");
+		Scanner sc = new Scanner(file);
+		while (sc.hasNext()) {
+			Customer customer = new Customer();
+			customer.readFromFile(sc);
+			this.customerList.add(customer);
+		}	
+		
+	}
+	
 }
